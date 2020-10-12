@@ -15,16 +15,21 @@ def check_disk_full(disk, min_gb, min_percent):
     percent_free = 100 * du.free / du.total
     # Calculate jow many gigabytes
     gigabytes_free = du.free / 2**30
-    if percent_free < min_percent ir gigabytes_free < min_gb:
+    if percent_free < min_percent or gigabytes_free < min_gb:
         return True
     return False
+
+def check_root_full():
+    """Returns True if the root partition is full, False otherwise."""
+    return check_disk_full(disk="/", min_gb=2, min_percent=10)
+
 
 def main():
     if check_reboot():
         print("Pending reeboot.")
         sys.exit(1)
-    if check_disk_full(disk="/", min_gb=2, min_percent=10):
-        print("Disk full.")
+    if check_root_full():
+        print("Root parition full.")
         sys.exit(1)
 
     print("Everything ok.")
